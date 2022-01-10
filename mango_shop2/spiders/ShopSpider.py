@@ -16,7 +16,7 @@ class ShopspiderSpider(scrapy.Spider):
     def start_requests(self):
         options = webdriver.FirefoxOptions() #starting Selenium Driver
         options.add_argument('--headless')
-        ser = Service('geckodriver path')
+        ser = Service('geckodriver path') # add path to the geckodriver file
         self.driver = webdriver.Firefox(service=ser, options=options)
         for url in self.start_urls:
             self.driver.get(url)
