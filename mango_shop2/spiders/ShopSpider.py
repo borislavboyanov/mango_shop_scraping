@@ -14,17 +14,17 @@ class ShopspiderSpider(scrapy.Spider):
     start_urls = ['https://shop.mango.com/bg-en/women/skirts-midi/midi-satin-skirt_17042020.html?c=99/']
 
     def start_requests(self):
-        options = webdriver.FirefoxOptions()
+        options = webdriver.FirefoxOptions() #starting Selenium Driver
         options.add_argument('--headless')
         ser = Service('geckodriver path')
         self.driver = webdriver.Firefox(service=ser, options=options)
         for url in self.start_urls:
             self.driver.get(url)
             # _ = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, 'selector-list')))
-            yield Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse) # yielding the requested page for each URL
 
     def parse(self, response):
-        name = self.driver.find_element(By.CLASS_NAME, 'product-name').text
+        name = self.driver.find_element(By.CLASS_NAME, 'product-name').text # extracting the desired data by class names
         if 'product-sale--discount' in self.driver.page_source:
             price = self.driver.find_element(By.CLASS_NAME, 'product-sale--discount').text
         else:
@@ -39,6 +39,6 @@ class ShopspiderSpider(scrapy.Spider):
                 sizes.append(size)
 
         result = {'name': name, 'price': price, 'color': color, 'size': sizes}
-        with open('data.txt', 'w') as outfile:
+        with open('data.txt', 'w') as outfile: # writing into a json file
             json.dump(result, outfile)
         self.driver.close()
